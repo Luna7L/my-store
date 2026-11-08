@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lumière + | Online Store</title>
-    <!-- Google Fonts for Clean Typography -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
-    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
@@ -15,11 +13,8 @@
             --card-bg: #ffffff;
             --accent-purple: #b497d6;
             --accent-purple-dark: #9878bd;
-            --soft-purple-bg: #f2ebf7;
             --text-dark: #333333;
             --text-muted: #777777;
-            --border-radius-lg: 20px;
-            --border-radius-md: 12px;
         }
 
         * {
@@ -32,7 +27,7 @@
             font-family: 'Poppins', sans-serif;
             background-color: var(--bg-color);
             color: var(--text-dark);
-            padding: 20px;
+            padding: 15px;
             display: flex;
             justify-content: center;
         }
@@ -41,12 +36,32 @@
             max-width: 1200px;
             width: 100%;
             background: #ffffff;
-            border-radius: 28px;
-            padding: 24px;
+            border-radius: 24px;
+            padding: 20px;
             box-shadow: 0 10px 40px rgba(180, 151, 214, 0.15);
         }
 
-        /* NAVBAR */
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #4a3e56;
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-size: 13px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            display: none;
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         .navbar {
             display: flex;
             align-items: center;
@@ -63,21 +78,21 @@
         }
 
         .logo-img {
-            width: 48px;
-            height: 48px;
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
             object-fit: cover;
         }
 
         .logo-text h2 {
             font-family: 'Playfair Display', serif;
-            font-size: 22px;
+            font-size: 20px;
             color: #4a3e56;
             font-weight: 600;
         }
 
         .logo-text p {
-            font-size: 11px;
+            font-size: 10px;
             color: var(--text-muted);
         }
 
@@ -108,7 +123,7 @@
 
         .nav-icons {
             display: flex;
-            gap: 20px;
+            gap: 18px;
         }
 
         .nav-item {
@@ -120,6 +135,7 @@
             font-size: 11px;
             gap: 4px;
             position: relative;
+            cursor: pointer;
         }
 
         .nav-item i {
@@ -132,9 +148,9 @@
             right: 2px;
             background: var(--accent-purple);
             color: white;
-            font-size: 9px;
-            width: 15px;
-            height: 15px;
+            font-size: 10px;
+            width: 16px;
+            height: 16px;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -142,45 +158,44 @@
             font-weight: bold;
         }
 
-        /* HERO BANNER */
         .hero-banner {
             background: linear-gradient(110deg, #bfa6db 0%, #d8c7eb 50%, #eee6f5 100%);
-            border-radius: var(--border-radius-lg);
-            padding: 40px;
+            border-radius: 20px;
+            padding: 30px;
             display: flex;
             align-items: center;
             position: relative;
             overflow: hidden;
-            min-height: 240px;
-            margin-bottom: 30px;
+            min-height: 200px;
+            margin-bottom: 25px;
             color: #fff;
         }
 
         .hero-content {
-            max-width: 450px;
+            max-width: 400px;
             z-index: 2;
         }
 
         .hero-subtitle {
-            font-size: 13px;
+            font-size: 12px;
             font-style: italic;
             opacity: 0.9;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
             font-family: 'Playfair Display', serif;
         }
 
         .hero-title {
             font-family: 'Playfair Display', serif;
-            font-size: 36px;
+            font-size: 30px;
             line-height: 1.1;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             font-weight: 600;
         }
 
         .hero-tags {
-            font-size: 12px;
+            font-size: 11px;
             opacity: 0.85;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .btn-shop {
@@ -189,54 +204,53 @@
             gap: 8px;
             background: #ffffff;
             color: #4a3e56;
-            padding: 10px 22px;
+            padding: 8px 18px;
             border-radius: 20px;
             text-decoration: none;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 500;
             box-shadow: 0 4px 15px rgba(0,0,0,0.06);
-            transition: 0.3s;
+            transition: 0.2s;
         }
 
         .btn-shop:hover {
-            transform: translateY(-2px);
+            transform: scale(1.03);
         }
 
-        /* CATEGORIES */
         .categories {
             display: flex;
             justify-content: space-between;
-            gap: 15px;
+            gap: 12px;
             overflow-x: auto;
             padding-bottom: 10px;
-            margin-bottom: 35px;
+            margin-bottom: 30px;
         }
 
         .category-item {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 10px;
-            min-width: 80px;
+            gap: 8px;
+            min-width: 75px;
             text-decoration: none;
             color: var(--text-dark);
+            cursor: pointer;
         }
 
         .cat-img-box {
-            width: 75px;
-            height: 75px;
+            width: 65px;
+            height: 65px;
             border-radius: 50%;
             background: #f3ebf7;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
-            transition: 0.3s;
+            transition: 0.2s;
         }
 
         .category-item:hover .cat-img-box {
             transform: scale(1.05);
-            background: #e9dcf2;
         }
 
         .cat-img-box img {
@@ -246,27 +260,26 @@
         }
 
         .category-item span {
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 500;
             color: #555;
         }
 
-        /* PRODUCTS SECTION */
         .section-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 18px;
         }
 
         .section-header h3 {
-            font-size: 20px;
+            font-size: 18px;
             color: #3b3247;
             font-weight: 600;
         }
 
         .view-all {
-            font-size: 13px;
+            font-size: 12px;
             color: #8367a7;
             text-decoration: none;
             font-weight: 500;
@@ -274,32 +287,31 @@
 
         .products-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 35px;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 18px;
+            margin-bottom: 30px;
         }
 
         .product-card {
             background: #fff;
-            border-radius: var(--border-radius-md);
+            border-radius: 12px;
             overflow: hidden;
             border: 1px solid #f0e8f5;
-            transition: 0.3s;
             position: relative;
             display: flex;
             flex-direction: column;
+            transition: 0.2s;
         }
 
         .product-card:hover {
-            box-shadow: 0 8px 25px rgba(180, 151, 214, 0.18);
-            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(180, 151, 214, 0.15);
         }
 
         .wishlist-btn {
             position: absolute;
             top: 10px;
             right: 10px;
-            background: rgba(255,255,255,0.8);
+            background: rgba(255,255,255,0.85);
             width: 28px;
             height: 28px;
             border-radius: 50%;
@@ -310,11 +322,16 @@
             font-size: 13px;
             cursor: pointer;
             z-index: 2;
+            transition: 0.2s;
+        }
+
+        .wishlist-btn.active {
+            color: #e74c3c;
         }
 
         .product-img {
             width: 100%;
-            height: 170px;
+            height: 160px;
             object-fit: cover;
             background: #f9f6fb;
         }
@@ -343,7 +360,7 @@
         .product-rating {
             font-size: 11px;
             color: #888;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
 
         .product-rating i {
@@ -365,51 +382,51 @@
             align-items: center;
             justify-content: center;
             gap: 6px;
-            transition: 0.2s;
             margin-top: auto;
+            transition: 0.2s;
         }
 
         .add-cart-btn:hover {
             background: var(--accent-purple-dark);
         }
 
-        /* FEATURES BAR */
         .features-bar {
             background: #f7f2fb;
             border-radius: 16px;
-            padding: 20px;
+            padding: 18px;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 12px;
         }
 
         .feature-item {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
         }
 
         .feature-icon {
-            font-size: 20px;
+            font-size: 18px;
             color: #896cb0;
         }
 
         .feature-text h4 {
-            font-size: 12px;
+            font-size: 11px;
             color: #3b3247;
             font-weight: 600;
         }
 
         .feature-text p {
-            font-size: 10px;
+            font-size: 9px;
             color: #888;
         }
     </style>
 </head>
 <body>
 
+<div class="toast" id="toast">Added to cart! ✨</div>
+
 <div class="container">
-    <!-- NAVBAR -->
     <div class="navbar">
         <div class="logo-container">
             <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=100" alt="Logo" class="logo-img">
@@ -421,141 +438,132 @@
 
         <div class="search-bar">
             <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" placeholder="Search for anything...">
+            <input type="text" id="searchInput" placeholder="Search for anything...">
         </div>
 
         <div class="nav-icons">
-            <a href="#" class="nav-item">
+            <div class="nav-item">
                 <i class="fa-solid fa-house"></i>
                 <span>Home</span>
-            </a>
-            <a href="#" class="nav-item">
+            </div>
+            <div class="nav-item">
                 <i class="fa-regular fa-heart"></i>
                 <span>Wishlist</span>
-            </a>
-            <a href="#" class="nav-item">
+            </div>
+            <div class="nav-item">
                 <i class="fa-regular fa-user"></i>
                 <span>Account</span>
-            </a>
-            <a href="#" class="nav-item">
+            </div>
+            <div class="nav-item">
                 <i class="fa-solid fa-bag-shopping"></i>
                 <span>Cart</span>
-                <span class="cart-badge">0</span>
-            </a>
+                <span class="cart-badge" id="cartCount">0</span>
+            </div>
         </div>
     </div>
 
-    <!-- HERO BANNER -->
     <div class="hero-banner">
         <div class="hero-content">
             <p class="hero-subtitle">New Collection</p>
             <h1 class="hero-title">Soft Looks<br>Brighter Days ✨</h1>
             <p class="hero-tags">Fashion • Beauty • Home • More</p>
-            <a href="#" class="btn-shop">Shop Now <i class="fa-solid fa-arrow-right"></i></a>
+            <a href="#featured" class="btn-shop">Shop Now <i class="fa-solid fa-arrow-right"></i></a>
         </div>
     </div>
 
-    <!-- CATEGORIES -->
     <div class="categories">
-        <a href="#" class="category-item">
+        <div class="category-item">
             <div class="cat-img-box"><img src="https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=200" alt="Clothing"></div>
             <span>Clothing</span>
-        </a>
-        <a href="#" class="category-item">
+        </div>
+        <div class="category-item">
             <div class="cat-img-box"><img src="https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=200" alt="Accessories"></div>
             <span>Accessories</span>
-        </a>
-        <a href="#" class="category-item">
+        </div>
+        <div class="category-item">
             <div class="cat-img-box"><img src="https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=200" alt="Beauty"></div>
             <span>Beauty</span>
-        </a>
-        <a href="#" class="category-item">
+        </div>
+        <div class="category-item">
             <div class="cat-img-box"><img src="https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?w=200" alt="Home & Decor"></div>
             <span>Home & Decor</span>
-        </a>
-        <a href="#" class="category-item">
+        </div>
+        <div class="category-item">
             <div class="cat-img-box"><img src="https://images.unsplash.com/photo-1544816155-12df9643f363?w=200" alt="Stationery"></div>
             <span>Stationery</span>
-        </a>
-        <a href="#" class="category-item">
+        </div>
+        <div class="category-item">
             <div class="cat-img-box"><img src="https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=200" alt="Shoes"></div>
             <span>Shoes</span>
-        </a>
-        <a href="#" class="category-item">
+        </div>
+        <div class="category-item">
             <div class="cat-img-box"><img src="https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=200" alt="Sale"></div>
             <span>Sale</span>
-        </a>
+        </div>
     </div>
 
-    <!-- FEATURED PRODUCTS -->
-    <div class="section-header">
+    <div class="section-header" id="featured">
         <h3>Featured Products</h3>
         <a href="#" class="view-all">View All <i class="fa-solid fa-arrow-right"></i></a>
     </div>
 
-    <div class="products-grid">
-        <!-- Product 1 -->
-        <div class="product-card">
-            <div class="wishlist-btn"><i class="fa-regular fa-heart"></i></div>
+    <div class="products-grid" id="productsGrid">
+        <div class="product-card" data-name="elegant dress">
+            <div class="wishlist-btn" onclick="toggleWishlist(this)"><i class="fa-regular fa-heart"></i></div>
             <img src="https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=400" class="product-img" alt="Dress">
             <div class="product-info">
                 <div class="product-title">Elegant Dress</div>
                 <div class="product-price">4,800 DZD</div>
                 <div class="product-rating"><i class="fa-solid fa-star"></i> 4.8 (124)</div>
-                <button class="add-cart-btn"><i class="fa-solid fa-bag-shopping"></i> Add to Cart</button>
+                <button class="add-cart-btn" onclick="addToCart('Elegant Dress')"><i class="fa-solid fa-bag-shopping"></i> Add to Cart</button>
             </div>
         </div>
 
-        <!-- Product 2 -->
-        <div class="product-card">
-            <div class="wishlist-btn"><i class="fa-regular fa-heart"></i></div>
+        <div class="product-card" data-name="classic handbag">
+            <div class="wishlist-btn" onclick="toggleWishlist(this)"><i class="fa-regular fa-heart"></i></div>
             <img src="https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=400" class="product-img" alt="Handbag">
             <div class="product-info">
                 <div class="product-title">Classic Handbag</div>
                 <div class="product-price">3,500 DZD</div>
                 <div class="product-rating"><i class="fa-solid fa-star"></i> 4.7 (98)</div>
-                <button class="add-cart-btn"><i class="fa-solid fa-bag-shopping"></i> Add to Cart</button>
+                <button class="add-cart-btn" onclick="addToCart('Classic Handbag')"><i class="fa-solid fa-bag-shopping"></i> Add to Cart</button>
             </div>
         </div>
 
-        <!-- Product 3 -->
-        <div class="product-card">
-            <div class="wishlist-btn"><i class="fa-regular fa-heart"></i></div>
+        <div class="product-card" data-name="skincare set">
+            <div class="wishlist-btn" onclick="toggleWishlist(this)"><i class="fa-regular fa-heart"></i></div>
             <img src="https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400" class="product-img" alt="Skincare">
             <div class="product-info">
                 <div class="product-title">Skincare Set</div>
                 <div class="product-price">2,900 DZD</div>
                 <div class="product-rating"><i class="fa-solid fa-star"></i> 4.9 (210)</div>
-                <button class="add-cart-btn"><i class="fa-solid fa-bag-shopping"></i> Add to Cart</button>
+                <button class="add-cart-btn" onclick="addToCart('Skincare Set')"><i class="fa-solid fa-bag-shopping"></i> Add to Cart</button>
             </div>
         </div>
 
-        <!-- Product 4 -->
-        <div class="product-card">
-            <div class="wishlist-btn"><i class="fa-regular fa-heart"></i></div>
+        <div class="product-card" data-name="bedding set">
+            <div class="wishlist-btn" onclick="toggleWishlist(this)"><i class="fa-regular fa-heart"></i></div>
             <img src="https://images.unsplash.com/photo-1616046229478-9901c5536a45?w=400" class="product-img" alt="Bedding">
             <div class="product-info">
                 <div class="product-title">Bedding Set</div>
                 <div class="product-price">6,200 DZD</div>
                 <div class="product-rating"><i class="fa-solid fa-star"></i> 4.6 (87)</div>
-                <button class="add-cart-btn"><i class="fa-solid fa-bag-shopping"></i> Add to Cart</button>
+                <button class="add-cart-btn" onclick="addToCart('Bedding Set')"><i class="fa-solid fa-bag-shopping"></i> Add to Cart</button>
             </div>
         </div>
 
-        <!-- Product 5 -->
-        <div class="product-card">
-            <div class="wishlist-btn"><i class="fa-regular fa-heart"></i></div>
+        <div class="product-card" data-name="white sneakers">
+            <div class="wishlist-btn" onclick="toggleWishlist(this)"><i class="fa-regular fa-heart"></i></div>
             <img src="https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=400" class="product-img" alt="Sneakers">
             <div class="product-info">
                 <div class="product-title">White Sneakers</div>
                 <div class="product-price">3,200 DZD</div>
                 <div class="product-rating"><i class="fa-solid fa-star"></i> 4.5 (76)</div>
-                <button class="add-cart-btn"><i class="fa-solid fa-bag-shopping"></i> Add to Cart</button>
+                <button class="add-cart-btn" onclick="addToCart('White Sneakers')"><i class="fa-solid fa-bag-shopping"></i> Add to Cart</button>
             </div>
         </div>
     </div>
 
-    <!-- FEATURES BAR -->
     <div class="features-bar">
         <div class="feature-item">
             <i class="fa-solid fa-truck-fast feature-icon"></i>
@@ -586,8 +594,53 @@
             </div>
         </div>
     </div>
-
 </div>
+
+<!-- JAVASCRIPT FOR INTERACTIVITY -->
+<script>
+    let cartCount = 0;
+
+    function addToCart(productName) {
+        cartCount++;
+        document.getElementById('cartCount').innerText = cartCount;
+        showToast(`Added "${productName}" to cart! 🛍️`);
+    }
+
+    function toggleWishlist(btn) {
+        btn.classList.toggle('active');
+        const icon = btn.querySelector('i');
+        if (btn.classList.contains('active')) {
+            icon.className = 'fa-solid fa-heart';
+            showToast('Added to Wishlist ❤️');
+        } else {
+            icon.className = 'fa-regular fa-heart';
+        }
+    }
+
+    function showToast(message) {
+        const toast = document.getElementById('toast');
+        toast.innerText = message;
+        toast.style.display = 'block';
+        setTimeout(() => {
+            toast.style.display = 'none';
+        }, 2000);
+    }
+
+    // Live Search Logic
+    document.getElementById('searchInput').addEventListener('input', function(e) {
+        const query = e.target.value.toLowerCase();
+        const cards = document.querySelectorAll('.product-card');
+
+        cards.forEach(card => {
+            const name = card.getAttribute('data-name');
+            if (name.includes(query)) {
+                card.style.display = 'flex';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    });
+</script>
 
 </body>
 </html>
