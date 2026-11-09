@@ -78,6 +78,17 @@ nav em:empty,nav em[data-n="0"]{display:none}
 .wa{width:40px;flex:none!important;background:#e8f5ec;color:#1f9a52;font-size:18px}
 .likes{font-size:12px;color:var(--mu)}
 .date{font-size:12px;color:var(--mu)}
+.modal{position:fixed;inset:auto 0 0 0;max-width:760px;margin:auto;max-height:92vh;overflow:auto;background:#fff;border-radius:22px 22px 0 0;z-index:12;transform:translateY(105%);transition:.3s;padding:20px}
+@media(min-width:700px){.modal{inset:5vh 0;border-radius:22px;max-height:90vh;height:fit-content;transform:translateY(120vh)}}
+.modal.on{transform:none!important}
+.mg{display:grid;grid-template-columns:1fr 1fr;gap:20px}@media(max-width:620px){.mg{grid-template-columns:1fr}}
+.main{width:100%;aspect-ratio:1;object-fit:cover;border-radius:14px;background:var(--pl)}
+.thumbs{display:flex;gap:8px;margin-top:8px;overflow:auto}.thumbs img{width:54px;height:54px;object-fit:cover;border-radius:8px;cursor:pointer;border:2px solid transparent}.thumbs img.on{border-color:var(--pd)}
+.mh{display:flex;justify-content:space-between;align-items:start;gap:10px}.mh h2{font-size:20px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 12px}.chip{border:1px solid var(--line);padding:6px 14px;border-radius:20px;font-size:13px}.chip.on{background:var(--pd);color:#fff;border-color:var(--pd)}
+.lb{font-size:13px;color:var(--mu);margin-top:8px}.specs{padding-inline-start:18px;font-size:13.5px;color:var(--ink);margin:6px 0}
+.stock{display:inline-block;font-size:12.5px;padding:4px 12px;border-radius:20px;margin:6px 0}.ok{background:#e8f5ec;color:#1f7a45}.no{background:#fdecec;color:#b13b3b}
+.fi{width:100%;border:1px solid var(--line);border-radius:10px;padding:11px 12px;font:inherit;font-size:14px;margin-top:8px;outline:none}.fi:focus{border-color:var(--p)}
 .empty{grid-column:1/-1;text-align:center;color:var(--mu);padding:50px 0;font-size:15px}
 
 .feat{display:grid;grid-template-columns:repeat(4,1fr);background:var(--bg);border-radius:var(--r);padding:20px 10px;margin-top:34px}
@@ -132,8 +143,8 @@ nav em:empty,nav em[data-n="0"]{display:none}
 <div class="wrap">
   <header>
     <div class="logo">
-      <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=120" alt="">
-      <div><b>Lumière +</b><small>More than just a shop</small></div>
+      <img id="logoImg" src="" alt="">
+      <div><b id="sName"></b><small id="sTag"></small></div>
     </div>
     <label class="search"><svg><use href="#i-search"/></svg><input id="q" placeholder="ابحثي عن أي شيء..."></label>
     <nav>
@@ -144,11 +155,11 @@ nav em:empty,nav em[data-n="0"]{display:none}
     </nav>
   </header>
 
-  <section class="hero">
+  <section class="hero" id="hero">
     <div>
       <i>New Collection</i>
-      <h1>أناقة ناعمة، أيام أكثر إشراقاً</h1>
-      <p>أزياء &nbsp;·&nbsp; عناية &nbsp;·&nbsp; منزل &nbsp;·&nbsp; والمزيد</p>
+      <h1 id="hT"></h1>
+      <p id="hS"></p>
       <button class="btn" id="shop">تسوقي الآن <svg><use href="#i-arrow"/></svg></button>
     </div>
   </section>
@@ -166,98 +177,162 @@ nav em:empty,nav em[data-n="0"]{display:none}
   </div>
 </div>
 
+<div class="ov" id="ov"></div>
+<div class="modal" id="modal"></div>
 <div class="toast" id="toast"></div>
 
-<script>
-// ====== إعدادات سهلة التعديل ======
-const WHATSAPP = "213000000000"; // رقمك بصيغة دولية بدون + (للجزائر: 2135XXXXXXXX)
-const U = id => `https://images.unsplash.com/${id}?w=600&q=80`;
-const PRODUCTS = [
-  {id:1,name:"فستان أنيق راقي",price:4800,cat:"clothing",rate:4.8,likes:12,img:U("photo-1515372039744-b8f02a3ae446")},
-  {id:2,name:"حقيبة كلاسيكية فاخرة",price:3500,cat:"accessories",rate:4.7,likes:8,img:U("photo-1584917865442-de89df76afd3")},
-  {id:3,name:"مجموعة العناية بالبشرة",price:2900,cat:"beauty",rate:4.9,likes:19,img:U("photo-1596462502278-27bfdc403348")},
-  {id:4,name:"طقم مفروشات ناعم",price:6200,cat:"home",rate:4.6,likes:6,img:U("photo-1505693416388-ac5ce068fe85")},
-  {id:5,name:"حذاء رياضي أبيض",price:3200,cat:"shoes",rate:4.5,likes:15,img:U("photo-1595950653106-6c9ebd614d3a")}
-  // أضيفي منتجاً: {id:6,name:"الاسم",price:1500,old:2000,cat:"sale",rate:4.5,likes:0,img:"رابط الصورة"}
-];
-const CATS=[
- ["all","الكل",U("photo-1441986300917-64674bd600d8")],
- ["clothing","ملابس",U("photo-1515372039744-b8f02a3ae446")],
- ["accessories","إكسسوارات",U("photo-1584917865442-de89df76afd3")],
- ["beauty","عناية",U("photo-1596462502278-27bfdc403348")],
- ["home","المنزل",U("photo-1505693416388-ac5ce068fe85")],
- ["shoes","أحذية",U("photo-1595950653106-6c9ebd614d3a")],
- ["sale","تخفيضات",U("photo-1607083206869-4c7672e72a8a")]
-];
-// ==================================
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import {getAuth,onAuthStateChanged,signInAnonymously,signInWithPopup,linkWithPopup,GoogleAuthProvider,signInWithCredential,signOut} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import {getFirestore,doc,getDoc,setDoc,getDocs,collection,addDoc,updateDoc,deleteDoc,increment,serverTimestamp,query,orderBy,limit,writeBatch} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+const app=initializeApp({apiKey:"AIzaSyDUe1yyhd2oVHKhmNLxGUngLkBkzIi28O8",authDomain:"lumiere-store-c8ed9.firebaseapp.com",projectId:"lumiere-store-c8ed9",storageBucket:"lumiere-store-c8ed9.firebasestorage.app",messagingSenderId:"1057367073258",appId:"1:1057367073258:web:0575a53b780d4c5d0d9293"}),auth=getAuth(app),db=getFirestore(app);
+
 const $=s=>document.querySelector(s);
 const ic=n=>`<svg><use href="#i-${n}"/></svg>`;
 const load=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}};
+let PRODUCTS=[],CATS=[],S={},M=null;
 let wish=load("wish",[]),hist=load("hist",[]),liked=load("liked",[]),user=load("user",""),cat="all",view="home";
-const save=()=>{try{localStorage.setItem("wish",JSON.stringify(wish));localStorage.setItem("hist",JSON.stringify(hist));localStorage.setItem("liked",JSON.stringify(liked));localStorage.setItem("user",JSON.stringify(user))}catch(e){}};
-const fmt=n=>n.toLocaleString("en-US")+" دج";
+let cloudT;const save=()=>{try{localStorage.setItem("wish",JSON.stringify(wish));localStorage.setItem("hist",JSON.stringify(hist));localStorage.setItem("liked",JSON.stringify(liked));localStorage.setItem("user",JSON.stringify(user))}catch(e){}clearTimeout(cloudT);cloudT=setTimeout(cloudSave,1500)};
+const fmt=n=>Number(n).toLocaleString("en-US")+" دج";
 const imgErr="this.onerror=null;this.style.display='none'";
 const byId=id=>PRODUCTS.find(p=>p.id==id);
-const likeCount=p=>p.likes+(liked.includes(p.id)?1:0);
+const cover=p=>(p.imgs&&p.imgs[0])||"";
+const likeCount=p=>(p.likes||0)+(liked.includes(p.id)?1:0);
+const list=s=>(s||"").split(",").map(x=>x.trim()).filter(Boolean);
 function toast(t){const e=$("#toast");e.textContent=t;e.classList.add("on");clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove("on"),1900)}
 
-function renderCats(){$("#cats").innerHTML=CATS.map(c=>`<button class="cat ${cat===c[0]?'on':''}" data-c="${c[0]}"><span><img src="${c[2]}" alt="" onerror="${imgErr}"></span>${c[1]}</button>`).join("")}
+function applyS(){
+  document.title=S.name||"متجر";$("#sName").textContent=S.name||"";$("#sTag").textContent=S.tagline||"";
+  $("#logoImg").src=S.logo||"";$("#hT").textContent=S.heroTitle||"";$("#hS").textContent=S.heroSub||"";
+  if(S.heroImg)$("#hero").style.backgroundImage=`url("${S.heroImg}")`;
+  const r=document.documentElement.style,c=S.color||"#8f72b0";
+  r.setProperty("--p",c);r.setProperty("--pd",`color-mix(in srgb,${c} 65%,#000)`);r.setProperty("--pl",`color-mix(in srgb,${c} 13%,#fff)`);
+}
+function renderCats(){$("#cats").innerHTML=CATS.map(c=>`<button class="cat ${cat===c.id?'on':''}" data-c="${c.id}"><span><img src="${c.img}" alt="" onerror="${imgErr}"></span>${c.name}</button>`).join("")}
 
 function card(p,mode,extra){
-  return `<article class="card"><div class="im"><img src="${p.img}" alt="${p.name}" loading="lazy" onerror="${imgErr}">
-  ${p.old?'<span class="tag">تخفيض</span>':''}
+  const out=!(p.qty>0);
+  return `<article class="card"><div class="im"><img src="${cover(p)}" alt="${p.name}" data-d="${p.id}" style="cursor:pointer" loading="lazy" onerror="${imgErr}">
+  ${out?'<span class="tag">نفد - يمكن الحجز</span>':(p.old?'<span class="tag">تخفيض</span>':'')}
   ${mode==="home"?`<button class="heart ${liked.includes(p.id)?'on':''}" data-l="${p.id}" aria-label="إعجاب">${ic('heart')}</button>`:''}</div>
-  <div class="in"><h3>${p.name}</h3>
-  <div class="price">${fmt(p.price)}${p.old?`<s>${fmt(p.old)}</s>`:''}</div>
-  ${mode==="home"?`<div class="rate">${ic('star')} ${p.rate} <span class="likes">· ${likeCount(p)} إعجاب</span></div>`:''}
+  <div class="in"><h3 data-d="${p.id}" style="cursor:pointer">${p.name}</h3>
+  <div class="price">${fmt(p.price)}${p.old>0?`<s>${fmt(p.old)}</s>`:''}</div>
+  ${mode==="home"?`<div class="rate">${ic('star')} ${p.rate||5} <span class="likes">· ${likeCount(p)} إعجاب</span></div>`:''}
   ${extra}</div></article>`;
 }
 function render(){
   const q=$("#q").value.trim().toLowerCase();
   const titles={home:"المنتجات المميزة",wish:"المنتجات التي ترغبين بشرائها",hist:"سجل مشترياتك السابقة"};
   $("#title").textContent=titles[view];
-  $("#cats").style.display=$(".hero").style.display=view==="home"?"":"none";
+  $("#cats").style.display=view==="home"?"":"none";
+  $("#hero").style.display=(view==="home"&&S.heroOn!==false)?"":"none";
   let html="";
   if(view==="home"){
-    const list=PRODUCTS.filter(p=>(cat==="all"||p.cat===cat)&&p.name.toLowerCase().includes(q));
-    html=list.map(p=>card(p,"home",`<div class="btns"><button class="b1 ${wish.includes(p.id)?'on':''}" data-w="${p.id}">${ic('bookmark')} ${wish.includes(p.id)?'محفوظ':'أرغب به'}</button><button class="b2" data-b="${p.id}">${ic('bag')} اشتريته</button><button class="wa" data-o="${p.id}" aria-label="اطلبي عبر واتساب">${ic('wa')}</button></div>`)).join("");
-    if(!list.length)html='<div class="empty">لا توجد منتجات في هذا القسم حالياً</div>';
+    const l=PRODUCTS.filter(p=>(cat==="all"||p.cat===cat)&&p.name.toLowerCase().includes(q));
+    html=l.map(p=>card(p,"home",`<div class="btns"><button class="b1 ${wish.includes(p.id)?'on':''}" data-w="${p.id}">${ic('bookmark')} ${wish.includes(p.id)?'محفوظ':'أرغب به'}</button><button class="b2" data-b="${p.id}">${ic('bag')} اشتريته</button></div><div class="btns"><button class="b2" data-d="${p.id}">${p.qty>0?'اطلبي الآن':'احجزي طلبك'}</button></div>`)).join("");
+    if(!l.length)html='<div class="empty">لا توجد منتجات في هذا القسم حالياً</div>';
   }else if(view==="wish"){
-    html=wish.map(id=>card(byId(id),"x",`<div class="btns"><button class="b1" data-r="${id}">حذف من القائمة</button><button class="b2" data-o="${id}">اطلبي الآن</button></div>`)).join("");
+    html=wish.map(id=>byId(id)).filter(Boolean).map(p=>card(p,"x",`<div class="btns"><button class="b1" data-r="${p.id}">حذف</button><button class="b2" data-d="${p.id}">${p.qty>0?'اطلبي الآن':'احجزي'}</button></div>`)).join("");
     if(!wish.length)html='<div class="empty">لا توجد منتجات محفوظة بعد. اضغطي «أرغب به» على أي منتج.</div>';
   }else{
-    html=hist.map(h=>card(byId(h.id),"x",`<div class="date">تاريخ الشراء: ${h.date}</div>`)).join("");
+    html=hist.filter(h=>byId(h.id)).map(h=>card(byId(h.id),"x",`<div class="date">تاريخ الشراء: ${h.date}</div>`)).join("");
     if(!hist.length)html='<div class="empty">لا توجد مشتريات مسجلة حتى الآن.</div>';
   }
   $("#prods").innerHTML=html;
   $("#wc").textContent=wish.length||"";$("#hc").textContent=hist.length||"";
   $("#accT").textContent=user||"تسجيل الدخول";save();
 }
-function setView(v){view=v;["Home","Wish","Hist"].forEach(n=>$("#n"+n).classList.toggle("on",(n==="Home"?"home":n==="Wish"?"wish":"hist")===v));render()}
-function order(id){const p=byId(id);
-  const msg=`مرحباً Lumière +، أريد طلب: ${p.name} (${fmt(p.price)})${user?"\nالاسم: "+user:""}`;
-  window.open(`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(msg)}`,"_blank")}
+function setView(v){view=v;[["Home","home"],["Wish","wish"],["Hist","hist"]].forEach(([n,k])=>$("#n"+n).classList.toggle("on",k===v));render()}
+
+/* نافذة تفاصيل المنتج + الطلب أو الحجز */
+function openM(id){const p=byId(id);if(!p)return;M={id,i:0,size:"",color:"",fn:user,fp:""};drawM();$("#ov").classList.add("on");$("#modal").classList.add("on")}
+function closeM(){M=null;$("#ov").classList.remove("on");$("#modal").classList.remove("on")}
+function drawM(){
+  const p=byId(M.id),imgs=p.imgs||[],sz=list(p.sizes),co=list(p.colors),out=!(p.qty>0);
+  $("#modal").innerHTML=`<div class="mg"><div><img class="main" src="${imgs[M.i]||""}" alt="" onerror="${imgErr}">
+  ${imgs.length>1?`<div class="thumbs">${imgs.map((u,i)=>`<img class="${i===M.i?'on':''}" src="${u}" data-t="${i}" alt="">`).join("")}</div>`:""}</div>
+  <div><div class="mh"><h2>${p.name}</h2><button data-x="1" aria-label="إغلاق">${ic('x')}</button></div>
+  <div class="price" style="font-size:18px">${fmt(p.price)}${p.old>0?`<s>${fmt(p.old)}</s>`:''}</div>
+  <span class="stock ${out?'no':'ok'}">${out?'نفدت الكمية، يمكنك حجز طلبك للدفعة القادمة':'متوفر: '+p.qty+' قطعة'}</span>
+  ${p.desc?`<p style="font-size:14px;line-height:1.8;color:var(--mu)">${p.desc}</p>`:""}
+  ${(p.specs||[]).length?`<ul class="specs">${p.specs.map(x=>`<li>${x}</li>`).join("")}</ul>`:""}
+  ${sz.length?`<div class="lb">المقاس</div><div class="chips">${sz.map(x=>`<button class="chip ${M.size===x?'on':''}" data-s="${x}">${x}</button>`).join("")}</div>`:""}
+  ${co.length?`<div class="lb">اللون</div><div class="chips">${co.map(x=>`<button class="chip ${M.color===x?'on':''}" data-k="${x}">${x}</button>`).join("")}</div>`:""}
+  <input class="fi" id="fn" placeholder="الاسم" value="${M.fn}"><input class="fi" id="fp" type="tel" placeholder="رقم الهاتف" value="${M.fp}">
+  <button class="b2" id="go" style="width:100%;margin-top:12px;padding:13px;border-radius:12px">${out?'احجزي طلبك':'أرسلي الطلب'}</button></div></div>`;
+}
+function keep(){const a=$("#fn"),b=$("#fp");if(a)M.fn=a.value;if(b)M.fp=b.value}
+async function cloudSave(){const u=auth.currentUser;if(!u)return;try{await setDoc(doc(db,"users",u.uid),{wish,liked,hist,lastSeen:serverTimestamp()},{merge:true})}catch(e){}}
+async function onUser(u){
+  user=(!u.isAnonymous&&u.displayName)?u.displayName:"";
+  try{const ref=doc(db,"users",u.uid),snap=await getDoc(ref),d=snap.exists()?snap.data():{};
+    if(snap.exists()&&d.wish){wish=d.wish;liked=d.liked||[];hist=d.hist||[]}
+    await setDoc(ref,{name:u.displayName||"",email:u.email||"",photo:u.photoURL||"",anon:u.isAnonymous,wish,liked,hist,lastSeen:serverTimestamp(),...(snap.exists()?{}:{createdAt:serverTimestamp()})},{merge:true});
+  }catch(e){}
+  render();
+}
+async function send(){
+  keep();const p=byId(M.id),out=!(p.qty>0);
+  if(!M.fn.trim()||M.fp.trim().length<8)return toast("أدخلي الاسم ورقم هاتف صحيح");
+  if(list(p.sizes).length&&!M.size)return toast("اختاري المقاس");
+  if(list(p.colors).length&&!M.color)return toast("اختاري اللون");
+  const btn=$("#go");btn.disabled=true;btn.textContent="جاري الإرسال...";
+  try{
+    if(!auth.currentUser)throw 0;
+    await addDoc(collection(db,"orders"),{pid:p.id,pname:p.name,price:p.price,size:M.size,color:M.color,name:M.fn.trim(),phone:M.fp.trim(),type:out?"reserve":"order",status:"new",uid:auth.currentUser.uid,createdAt:serverTimestamp()});
+    try{await updateDoc(doc(db,"products",String(p.id)),out?{reserved:increment(1)}:{qty:increment(-1)});if(out)p.reserved=(p.reserved||0)+1;else p.qty--}catch(e){}
+    toast(out?"تم تسجيل حجزك، سنتواصل معك":"تم إرسال طلبك، سنتصل بك قريباً");closeM();render();
+  }catch(e){
+    const msg=`${out?"حجز طلب":"طلب جديد"}\nالمنتج: ${p.name}\nالاسم: ${M.fn}\nالهاتف: ${M.fp}${M.size?"\nالمقاس: "+M.size:""}${M.color?"\nاللون: "+M.color:""}`;
+    window.open(`https://wa.me/${S.whatsapp}?text=${encodeURIComponent(msg)}`,"_blank");closeM();
+  }
+}
 
 document.addEventListener("click",e=>{
-  const t=e.target.closest("button");if(!t)return;const d=t.dataset;
-  if(d.c){cat=d.c;renderCats();render()}
-  if(d.l){const id=+d.l;liked=liked.includes(id)?liked.filter(x=>x!==id):[...liked,id];render()}
-  if(d.w){const id=+d.w;if(wish.includes(id)){wish=wish.filter(x=>x!==id);toast("أزيل من قائمة الرغبات")}else{wish.push(id);toast("أضيف إلى «أرغب بشرائه»")}render()}
-  if(d.r){wish=wish.filter(x=>x!==+d.r);toast("تم الحذف من القائمة");render()}
-  if(d.b){hist.unshift({id:+d.b,date:new Date().toLocaleDateString("ar-DZ")});toast("سُجل في مشترياتك السابقة");render()}
-  if(d.o)order(d.o);
+  const t=e.target.closest("button,[data-d],[data-t]");if(!t)return;const d=t.dataset;
+  if(d.c){cat=d.c;renderCats();render();return}
+  if(d.l){const id=+d.l;liked=liked.includes(id)?liked.filter(x=>x!==id):[...liked,id];render();return}
+  if(d.w){const id=+d.w;if(wish.includes(id)){wish=wish.filter(x=>x!==id);toast("أزيل من قائمة الرغبات")}else{wish.push(id);toast("أضيف إلى «أرغب بشرائه»")}render();return}
+  if(d.r){wish=wish.filter(x=>x!==+d.r);toast("تم الحذف");render();return}
+  if(d.b){hist.unshift({id:+d.b,date:new Date().toLocaleDateString("ar-DZ")});toast("سُجل في مشترياتك السابقة");render();return}
+  if(d.d){openM(+d.d);return}
+  if(!M)return;
+  if(d.x){closeM();return}
+  if(d.t!==undefined){keep();M.i=+d.t;drawM();return}
+  if(d.s){keep();M.size=d.s;drawM();return}
+  if(d.k){keep();M.color=d.k;drawM();return}
+  if(t.id==="go")send();
 });
+$("#ov").onclick=closeM;
 $("#q").oninput=()=>{if(view!=="home")setView("home");else render()};
 $("#shop").onclick=()=>$("#title").scrollIntoView({behavior:"smooth"});
 $("#nHome").onclick=()=>{cat="all";renderCats();setView("home")};
 $("#nWish").onclick=()=>setView("wish");
 $("#nHist").onclick=()=>setView("hist");
 $("#all").onclick=()=>{cat="all";$("#q").value="";renderCats();setView("home")};
-$("#nAcc").onclick=()=>{
-  if(user){if(confirm("تسجيل الخروج؟")){user="";render();toast("تم تسجيل الخروج")}}
-  else{const n=prompt("ما اسمك؟");if(n&&n.trim()){user=n.trim();render();toast("أهلاً "+user)}}
+$("#nAcc").onclick=async()=>{
+  const u=auth.currentUser,prov=new GoogleAuthProvider();
+  if(u&&!u.isAnonymous){if(confirm("تسجيل الخروج؟")){await cloudSave();wish=[];liked=[];hist=[];user="";save();await signOut(auth);render();toast("تم تسجيل الخروج")}return}
+  try{await cloudSave();
+    if(u){try{await onUser((await linkWithPopup(u,prov)).user)}
+      catch(e){if(e.code==="auth/credential-already-in-use"){await onUser((await signInWithCredential(auth,GoogleAuthProvider.credentialFromError(e))).user)}else throw e}}
+    else await onUser((await signInWithPopup(auth,prov)).user);
+    toast("أهلاً "+user);
+  }catch(e){toast("تعذر تسجيل الدخول")}
 };
-renderCats();render();
+onAuthStateChanged(auth,u=>{if(!u)signInAnonymously(auth).catch(()=>{});else onUser(u)});
+async function boot(){
+  try{
+    const [st,ps]=await Promise.all([getDoc(doc(db,"settings","store")),getDocs(query(collection(db,"products"),orderBy("order")))]);
+    if(!st.exists()||ps.empty)throw 0;
+    const d=st.data();S=d.settings;CATS=d.cats;PRODUCTS=ps.docs.map(x=>x.data());
+  }catch(e){
+    try{const d=await(await fetch("data.json?t="+Date.now())).json();PRODUCTS=d.products;CATS=d.cats;S=d.settings}
+    catch(x){$("#prods").innerHTML='<div class="empty">تعذر تحميل المتجر</div>';return}
+  }
+  applyS();renderCats();render();
+}
+boot();
 </script>
 </body>
 </html>

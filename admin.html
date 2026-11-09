@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>لوحة التحكم</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--p:#8f72b0;--pd:#5e437f;--pl:#f1ebf7;--line:#e8e0f0;--ink:#2f2540;--mu:#80748f}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Cairo',sans-serif;background:#f6f2fa;color:var(--ink);padding:14px;padding-bottom:90px}
+button{font-family:inherit;cursor:pointer;border:0}
+.box{max-width:760px;margin:auto}
+h1{font-size:20px;margin-bottom:12px}
+.card{background:#fff;border-radius:16px;padding:16px;margin-bottom:14px;box-shadow:0 4px 18px #5e437f12}
+.card h2{font-size:15px;margin-bottom:10px;color:var(--pd)}
+label{display:block;font-size:12.5px;color:var(--mu);margin:10px 0 4px}
+input,select,textarea{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font:inherit;font-size:14px;outline:none;background:#fff;color:var(--ink)}
+input:focus,select:focus,textarea:focus{border-color:var(--p)}
+input[type=color]{height:44px;padding:3px}input[type=checkbox]{width:auto}
+textarea{min-height:76px;resize:vertical}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tabs{display:flex;gap:8px;margin-bottom:14px}
+.tabs button{flex:1;padding:11px;border-radius:12px;background:#fff;font-weight:600;font-size:14px;color:var(--mu)}
+.tabs button.on{background:var(--pd);color:#fff}
+.btn{background:var(--p);color:#fff;padding:11px 18px;border-radius:12px;font-weight:600;font-size:14px}
+.btn.s{background:var(--pl);color:var(--pd)}.btn.r{background:#fdecec;color:#b13b3b}
+.save{position:fixed;bottom:0;inset-inline:0;background:#fff;padding:12px 14px;box-shadow:0 -6px 20px #0001;display:flex;gap:10px;justify-content:center;z-index:5}
+.save .btn{flex:1;max-width:340px;padding:14px}
+.pl{display:flex;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.pl img{width:54px;height:54px;border-radius:10px;object-fit:cover;background:var(--pl)}
+.pl div{flex:1;font-size:14px}.pl small{color:var(--mu)}
+.mini{width:34px;height:34px;border-radius:9px;background:var(--pl);color:var(--pd);font-size:15px}
+.imgs{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.imgs div{position:relative}.imgs img{width:74px;height:74px;object-fit:cover;border-radius:10px}
+.imgs button{position:absolute;top:-6px;inset-inline-end:-6px;width:22px;height:22px;border-radius:50%;background:#b13b3b;color:#fff;font-size:12px}
+.hint{font-size:12px;color:var(--mu);line-height:1.8;margin-top:6px}
+.msg{position:fixed;top:14px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:11px 22px;border-radius:30px;font-size:13.5px;z-index:20;display:none;max-width:90vw}
+.bd{font-size:11px;padding:2px 10px;border-radius:12px;font-weight:600}.bd.o{background:#e8f5ec;color:#1f7a45}.bd.r{background:#fff1d6;color:#9a6200}
+.st{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}.st div{background:#fff;border-radius:14px;padding:14px;text-align:center}.st b{display:block;font-size:24px;color:var(--pd)}.st span{font-size:12px;color:var(--mu)}
+.oc{border-bottom:1px solid var(--line);padding:12px 0;font-size:13.5px;line-height:1.9}.oc a{color:var(--pd);margin-inline-end:10px}
+</style>
+</head>
+<body>
+<div class="msg" id="msg"></div>
+<div class="box" id="app"></div>
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import {getAuth,onAuthStateChanged,signInAnonymously,signInWithPopup,linkWithPopup,GoogleAuthProvider,signInWithCredential,signOut} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import {getFirestore,doc,getDoc,setDoc,getDocs,collection,addDoc,updateDoc,deleteDoc,increment,serverTimestamp,query,orderBy,limit,writeBatch} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+const app=initializeApp({apiKey:"AIzaSyDUe1yyhd2oVHKhmNLxGUngLkBkzIi28O8",authDomain:"lumiere-store-c8ed9.firebaseapp.com",projectId:"lumiere-store-c8ed9",storageBucket:"lumiere-store-c8ed9.firebasestorage.app",messagingSenderId:"1057367073258",appId:"1:1057367073258:web:0575a53b780d4c5d0d9293"}),auth=getAuth(app),db=getFirestore(app);
+const ADMIN="mia15yousra@gmail.com";
+let me,data=null,tab="ord",edit=null,dirty=false,oldIds=[];
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/"/g,"&quot;").replace(/</g,"&lt;");
+function msg(t,ms=2600){const m=$("#msg");m.textContent=t;m.style.display="block";clearTimeout(msg.t);msg.t=setTimeout(()=>m.style.display="none",ms)}
+function resize(file,max=640){return new Promise(res=>{const im=new Image();im.onload=()=>{const k=Math.min(1,max/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=im.width*k;c.height=im.height*k;c.getContext("2d").drawImage(im,0,0,c.width,c.height);res(c.toDataURL("image/jpeg",.72))};im.src=URL.createObjectURL(file)})}
+const upload=(f,m)=>resize(f,m);
+const dt=t=>t?.toDate?t.toDate().toLocaleString("ar-DZ",{dateStyle:"short",timeStyle:"short"}):"";
+const wa=p=>"213"+String(p).replace(/\D/g,"").replace(/^0/,"");
+async function loadData(){
+  const st=await getDoc(doc(db,"settings","store")),ps=await getDocs(query(collection(db,"products"),orderBy("order")));
+  if(st.exists()){data={settings:st.data().settings,cats:st.data().cats,products:ps.docs.map(x=>x.data())};oldIds=ps.docs.map(x=>x.id)}
+  else{data=await(await fetch("data.json")).json();data.products.forEach(p=>p.reserved=0);msg("أول مرة: اضغطي «حفظ» لنقل المتجر إلى القاعدة",7000)}
+}
+async function saveAll(){
+  try{
+    for(const p of data.products)if(JSON.stringify(p).length>950000)return msg("صور «"+p.name+"» كبيرة جداً، احذفي بعضها",5000);
+    msg("جاري الحفظ...");const b=writeBatch(db);
+    b.set(doc(db,"settings","store"),{settings:data.settings,cats:data.cats});
+    data.products.forEach((p,i)=>{p.order=i;p.reserved=p.reserved||0;b.set(doc(db,"products",String(p.id)),p)});
+    oldIds.filter(id=>!data.products.some(p=>String(p.id)===id)).forEach(id=>b.delete(doc(db,"products",id)));
+    await b.commit();oldIds=data.products.map(p=>String(p.id));dirty=false;msg("تم الحفظ، ويظهر في المتجر فوراً ✓",3500);
+  }catch(e){msg("فشل الحفظ: "+(e.code||e.message),6000)}
+}
+function view(){
+  const a=$("#app");
+  if(me===undefined){a.innerHTML='<p style="padding:40px;text-align:center">جاري التحميل...</p>';return}
+  if(!me||me.email!==ADMIN){
+    a.innerHTML=`<h1>لوحة التحكم</h1><div class="card"><h2>الدخول</h2><p class="hint">${me&&!me.isAnonymous?"هذا الحساب ("+esc(me.email)+") غير مصرّح له.":"سجلي الدخول بحساب مدير المتجر."}</p><button class="btn" style="margin-top:12px;width:100%" id="login">الدخول بحساب Google</button></div>`;
+    $("#login").onclick=async()=>{try{await signInWithPopup(auth,new GoogleAuthProvider())}catch(e){msg("تعذر الدخول")}};return}
+  if(!data){a.innerHTML='<p style="padding:40px;text-align:center">جاري التحميل...</p>';loadData().then(view).catch(e=>msg("خطأ: "+(e.code||e.message),6000));return}
+  const T=[["ord","الطلبات"],["st","الإحصائيات"],["pr","المنتجات"],["set","المتجر"],["ct","الأقسام"]];
+  a.innerHTML=`<h1>لوحة تحكم المتجر</h1><div class="tabs" style="overflow:auto">${T.map(t=>`<button data-t="${t[0]}" class="${tab===t[0]?"on":""}" style="white-space:nowrap;min-width:90px">${t[1]}</button>`).join("")}</div><div id="pane"></div>
+  ${["pr","set","ct"].includes(tab)?'<div class="save"><button class="btn" id="saveBtn">حفظ ونشر التعديلات</button></div>':""}`;
+  document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{tab=b.dataset.t;edit=null;view()});
+  if($("#saveBtn"))$("#saveBtn").onclick=saveAll;
+  ({ord:pOrd,st:pStat,pr:pPr,set:pSet,ct:pCt})[tab]();
+}
+async function pOrd(){
+  $("#pane").innerHTML='<p class="hint">جاري تحميل الطلبات...</p>';
+  let os=[];try{os=(await getDocs(query(collection(db,"orders"),orderBy("createdAt","desc"),limit(100)))).docs.map(d=>({id:d.id,...d.data()}))}catch(e){return $("#pane").innerHTML='<div class="card">تعذر قراءة الطلبات. تأكدي من قواعد الأمان.</div>'}
+  const S={new:"جديد",ok:"تم التأكيد",done:"تم التسليم",no:"ملغي"};
+  $("#pane").innerHTML=`<div class="card"><h2>الطلبات والحجوزات (${os.length})</h2>${os.map(o=>`<div class="oc"><span class="bd ${o.type==="reserve"?"r":"o"}">${o.type==="reserve"?"حجز":"طلب"}</span> <b>${esc(o.pname)}</b> · ${esc(o.price)} دج${o.size?" · "+esc(o.size):""}${o.color?" · "+esc(o.color):""}<br>${esc(o.name)} · <a href="tel:${esc(o.phone)}">${esc(o.phone)}</a><a href="https://wa.me/${wa(o.phone)}" target="_blank">واتساب</a><small style="color:var(--mu)">${dt(o.createdAt)}</small><br>
+  <select data-s="${o.id}" style="width:auto;padding:6px 10px">${Object.entries(S).map(([k,v])=>`<option value="${k}" ${o.status===k?"selected":""}>${v}</option>`).join("")}</select> <button class="btn r" data-x="${o.id}" style="padding:6px 12px">حذف</button></div>`).join("")||'<p class="hint">لا توجد طلبات بعد.</p>'}</div>`;
+  document.querySelectorAll("[data-s]").forEach(e=>e.onchange=()=>updateDoc(doc(db,"orders",e.dataset.s),{status:e.value}).then(()=>msg("تم تحديث الحالة")));
+  document.querySelectorAll("[data-x]").forEach(b=>b.onclick=async()=>{if(confirm("حذف الطلب؟")){await deleteDoc(doc(db,"orders",b.dataset.x));pOrd()}});
+}
+async function pStat(){
+  $("#pane").innerHTML='<p class="hint">جاري الحساب...</p>';
+  try{
+    const us=(await getDocs(query(collection(db,"users"),limit(500)))).docs.map(d=>d.data()),os=(await getDocs(query(collection(db,"orders"),limit(500)))).docs.map(d=>d.data());
+    const reg=us.filter(u=>u.anon===false),res=data.products.reduce((a,p)=>a+(p.reserved||0),0),rev=os.filter(o=>o.status==="done"&&o.type==="order").reduce((a,o)=>a+Number(o.price||0),0);
+    $("#pane").innerHTML=`<div class="st"><div><b>${us.length}</b><span>إجمالي الزوار</span></div><div><b>${reg.length}</b><span>مسجلون بـGoogle</span></div><div><b>${os.length}</b><span>إجمالي الطلبات</span></div><div><b>${res}</b><span>إجمالي الحجوزات</span></div><div><b>${os.filter(o=>o.status==="new").length}</b><span>طلبات جديدة</span></div><div><b>${rev.toLocaleString("en-US")}</b><span>مبيعات مسلّمة (دج)</span></div></div>
+    <div class="card"><h2>الحجوزات حسب المنتج</h2>${data.products.map(p=>`<div class="pl"><div>${esc(p.name)}</div><b>${p.reserved||0}</b></div>`).join("")}</div>
+    <div class="card"><h2>المسجلون بـGoogle</h2>${reg.map(u=>`<div class="pl"><div>${esc(u.name)}<br><small>${esc(u.email)}</small></div><small>${dt(u.createdAt)}</small></div>`).join("")||'<p class="hint">لا يوجد مسجلون بعد.</p>'}</div>`;
+  }catch(e){$("#pane").innerHTML='<div class="card">تعذر قراءة الإحصائيات.</div>'}
+}
+function bind(root,obj){root.querySelectorAll("[data-k]").forEach(el=>{const k=el.dataset.k;
+  el.oninput=el.onchange=()=>{let v=el.type==="checkbox"?el.checked:el.value;if(el.dataset.n)v=Number(v)||0;obj[k]=v;dirty=true}})}
+
+function pSet(){
+  const s=data.settings;
+  $("#pane").innerHTML=`<div class="card"><h2>هوية المتجر</h2>
+  <label>اسم المتجر</label><input data-k="name" value="${esc(s.name)}">
+  <label>الشعار الصغير تحت الاسم</label><input data-k="tagline" value="${esc(s.tagline)}">
+  <label>الشعار (رابط صورة أو ارفعي صورة)</label><input data-k="logo" value="${esc(s.logo)}"><input type="file" accept="image/*" id="upLogo" style="margin-top:8px">
+  <label>اللون الرئيسي</label><input type="color" data-k="color" value="${s.color||"#8f72b0"}">
+  <label>رقم واتساب لاستقبال الطلبات (بصيغة دولية بدون +)</label><input data-k="whatsapp" inputmode="numeric" value="${esc(s.whatsapp)}"></div>
+  <div class="card"><h2>صورة الواجهة (البانر)</h2>
+  <label><input type="checkbox" data-k="heroOn" ${s.heroOn!==false?"checked":""}> إظهار البانر في الصفحة الرئيسية</label>
+  <label>العنوان</label><input data-k="heroTitle" value="${esc(s.heroTitle)}">
+  <label>النص الفرعي</label><input data-k="heroSub" value="${esc(s.heroSub)}">
+  <label>صورة البانر (رابط أو رفع)</label><input data-k="heroImg" value="${esc(s.heroImg)}"><input type="file" accept="image/*" id="upHero" style="margin-top:8px"></div>`;
+  bind($("#pane"),s);
+  const up=(id,k)=>$(id).onchange=async e=>{try{s[k]=await upload(e.target.files[0]);dirty=true;view()}catch(x){msg(x.message)}};
+  up("#upLogo","logo");up("#upHero","heroImg");
+}
+
+function pPr(){
+  if(edit!==null)return pEdit();
+  $("#pane").innerHTML=`<div class="card"><button class="btn" id="add" style="width:100%">+ إضافة منتج جديد</button>
+  ${data.products.map((p,i)=>`<div class="pl"><img src="${esc((p.imgs||[])[0]||"")}" alt=""><div>${esc(p.name)}<br><small>${p.price} دج · ${p.qty>0?"متوفر "+p.qty:"نفد"} · حجوزات ${p.reserved||0}</small></div>
+  <button class="mini" data-u="${i}">↑</button><button class="mini" data-d="${i}">↓</button><button class="btn s" data-e="${i}">تعديل</button></div>`).join("")||'<p class="hint">لا توجد منتجات.</p>'}
+  <p class="hint">الأسهم تغيّر ترتيب ظهور المنتجات في المتجر.</p></div>`;
+  $("#add").onclick=()=>{data.products.push({id:Date.now(),name:"منتج جديد",price:0,old:0,cat:data.cats[1]?.id||"all",rate:5,likes:0,imgs:[],reserved:0,sizes:"",colors:"",qty:1,desc:"",specs:[]});edit=data.products.length-1;dirty=true;view()};
+  document.querySelectorAll("[data-e]").forEach(b=>b.onclick=()=>{edit=+b.dataset.e;view()});
+  const mv=(i,j)=>{if(j<0||j>=data.products.length)return;[data.products[i],data.products[j]]=[data.products[j],data.products[i]];dirty=true;view()};
+  document.querySelectorAll("[data-u]").forEach(b=>b.onclick=()=>mv(+b.dataset.u,+b.dataset.u-1));
+  document.querySelectorAll("[data-d]").forEach(b=>b.onclick=()=>mv(+b.dataset.d,+b.dataset.d+1));
+}
+function pEdit(){
+  const p=data.products[edit];
+  $("#pane").innerHTML=`<div class="card"><h2>تعديل المنتج</h2>
+  <label>اسم المنتج</label><input data-k="name" value="${esc(p.name)}">
+  <div class="row"><div><label>السعر (دج)</label><input data-k="price" data-n="1" inputmode="numeric" value="${p.price}"></div><div><label>السعر قبل التخفيض (اختياري)</label><input data-k="old" data-n="1" inputmode="numeric" value="${p.old||0}"></div></div>
+  <div class="row"><div><label>القسم</label><select data-k="cat">${data.cats.filter(c=>c.id!=="all").map(c=>`<option value="${c.id}" ${p.cat===c.id?"selected":""}>${esc(c.name)}</option>`).join("")}</select></div><div><label>الكمية المتوفرة (0 = نفد ويصير حجزاً)</label><input data-k="qty" data-n="1" inputmode="numeric" value="${p.qty}"></div></div>
+  <p class="hint">عدد الحجوزات على هذا المنتج: <b>${p.reserved||0}</b></p><label>الوصف</label><textarea data-k="desc">${esc(p.desc)}</textarea>
+  <label>المواصفات (كل مواصفة في سطر)</label><textarea id="specs">${esc((p.specs||[]).join("\n"))}</textarea>
+  <label>المقاسات المتوفرة (افصلي بفاصلة، واتركيها فارغة إن لم توجد)</label><input data-k="sizes" placeholder="S,M,L أو 38,39,40" value="${esc(p.sizes)}">
+  <label>الألوان المتوفرة (افصلي بفاصلة)</label><input data-k="colors" placeholder="أبيض,أسود" value="${esc(p.colors)}">
+  <label>الصور (الأولى هي الغلاف)</label><div class="imgs">${(p.imgs||[]).map((u,i)=>`<div><img src="${esc(u)}" alt=""><button data-rm="${i}">×</button></div>`).join("")}</div>
+  <input type="file" accept="image/*" multiple id="upP">
+  <label>أو ألصقي رابط صورة</label><div class="row" style="grid-template-columns:1fr auto"><input id="url" placeholder="https://..."><button class="btn s" id="addUrl">إضافة</button></div></div>
+  <div class="row"><button class="btn s" id="back">رجوع للقائمة</button><button class="btn r" id="del">حذف المنتج</button></div>`;
+  bind($("#pane"),p);
+  $("#specs").oninput=e=>{p.specs=e.target.value.split("\n").map(x=>x.trim()).filter(Boolean);dirty=true};
+  $("#back").onclick=()=>{edit=null;view()};
+  $("#del").onclick=()=>{if(confirm("حذف هذا المنتج؟")){data.products.splice(edit,1);edit=null;dirty=true;view()}};
+  $("#upP").onchange=async e=>{try{p.imgs=p.imgs||[];for(const f of e.target.files)p.imgs.push(await upload(f));dirty=true;view()}catch(x){msg(x.message)}};
+  $("#addUrl").onclick=()=>{const u=$("#url").value.trim();if(u){p.imgs=p.imgs||[];p.imgs.push(u);dirty=true;view()}};
+  document.querySelectorAll("[data-rm]").forEach(b=>b.onclick=()=>{p.imgs.splice(+b.dataset.rm,1);dirty=true;view()});
+}
+function pCt(){
+  $("#pane").innerHTML=`<div class="card"><h2>الأقسام (الدوائر في الصفحة الرئيسية)</h2>${data.cats.map((c,i)=>`<div class="pl"><img src="${esc(c.img)}" alt=""><div><input data-i="${i}" data-f="name" value="${esc(c.name)}"><input data-i="${i}" data-f="img" value="${esc(c.img)}" placeholder="رابط الصورة" style="margin-top:6px;font-size:12px"></div>
+  <input type="file" accept="image/*" data-up="${i}" style="width:90px"></div>`).join("")}
+  <p class="hint">يمكنك تغيير اسم القسم وصورته. أما إضافة قسم جديد فأخبريني لأضيفها لك.</p></div>`;
+  document.querySelectorAll("[data-f]").forEach(el=>el.oninput=()=>{data.cats[+el.dataset.i][el.dataset.f]=el.value;dirty=true});
+  document.querySelectorAll("[data-up]").forEach(el=>el.onchange=async e=>{try{data.cats[+el.dataset.up].img=await upload(e.target.files[0]);dirty=true;view()}catch(x){msg(x.message)}});
+}
+window.onbeforeunload=()=>dirty?"عندك تعديلات غير محفوظة":undefined;
+onAuthStateChanged(auth,u=>{me=u;data=u&&u.email===ADMIN?data:null;view()});
+view();
+</script>
+</body>
+</html>
