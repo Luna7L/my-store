@@ -1,0 +1,137 @@
+{
+ "settings": {
+  "name": "Lumière +",
+  "tagline": "More than just a shop",
+  "logo": "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=120",
+  "color": "#8f72b0",
+  "heroOn": true,
+  "heroTitle": "أناقة ناعمة، أيام أكثر إشراقاً",
+  "heroSub": "أزياء · عناية · منزل · والمزيد",
+  "heroImg": "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=1600",
+  "whatsapp": "213000000000"
+ },
+ "cats": [
+  {
+   "id": "all",
+   "name": "الكل",
+   "img": "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=600&q=80"
+  },
+  {
+   "id": "clothing",
+   "name": "ملابس",
+   "img": "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=600&q=80"
+  },
+  {
+   "id": "accessories",
+   "name": "إكسسوارات",
+   "img": "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=600&q=80"
+  },
+  {
+   "id": "beauty",
+   "name": "عناية",
+   "img": "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=600&q=80"
+  },
+  {
+   "id": "home",
+   "name": "المنزل",
+   "img": "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=600&q=80"
+  },
+  {
+   "id": "shoes",
+   "name": "أحذية",
+   "img": "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=600&q=80"
+  },
+  {
+   "id": "sale",
+   "name": "تخفيضات",
+   "img": "https://images.unsplash.com/photo-1607083206869-4c7672e72a8a?w=600&q=80"
+  }
+ ],
+ "products": [
+  {
+   "id": 1,
+   "name": "فستان أنيق راقي",
+   "price": 4800,
+   "old": 0,
+   "cat": "clothing",
+   "rate": 4.8,
+   "likes": 12,
+   "imgs": [
+    "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=600&q=80"
+   ],
+   "sizes": "S,M,L",
+   "colors": "بنفسجي,أبيض",
+   "qty": 5,
+   "desc": "",
+   "specs": []
+  },
+  {
+   "id": 2,
+   "name": "حقيبة كلاسيكية فاخرة",
+   "price": 3500,
+   "old": 0,
+   "cat": "accessories",
+   "rate": 4.7,
+   "likes": 8,
+   "imgs": [
+    "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=600&q=80"
+   ],
+   "sizes": "",
+   "colors": "أبيض,أسود",
+   "qty": 3,
+   "desc": "",
+   "specs": []
+  },
+  {
+   "id": 3,
+   "name": "مجموعة العناية بالبشرة",
+   "price": 2900,
+   "old": 0,
+   "cat": "beauty",
+   "rate": 4.9,
+   "likes": 19,
+   "imgs": [
+    "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=600&q=80"
+   ],
+   "sizes": "",
+   "colors": "",
+   "qty": 10,
+   "desc": "",
+   "specs": []
+  },
+  {
+   "id": 4,
+   "name": "طقم مفروشات ناعم",
+   "price": 6200,
+   "old": 0,
+   "cat": "home",
+   "rate": 4.6,
+   "likes": 6,
+   "imgs": [
+    "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=600&q=80"
+   ],
+   "sizes": "",
+   "colors": "",
+   "qty": 0,
+   "desc": "",
+   "specs": []
+  },
+  {
+   "id": 5,
+   "name": "حذاء رياضي أبيض",
+   "price": 3200,
+   "old": 0,
+   "cat": "shoes",
+   "rate": 4.5,
+   "likes": 15,
+   "imgs": [
+    "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=600&q=80"
+   ],
+   "sizes": "38,39,40,41",
+   "colors": "أبيض",
+   "qty": 4,
+   "desc": "",
+   "specs": []
+  }
+ ]
+}
